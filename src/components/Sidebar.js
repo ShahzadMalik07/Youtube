@@ -9,7 +9,7 @@ const Sidebar = () => {
   
   if (!isMenuOpen) return null
   return (
-    <div className='p-3 w-48 flex flex-col'>
+    <div className='p-3 w-[15%] flex flex-col'>
       <div className=''>
         <ul className='space-y-3'>
           <li className='flex items-center gap-4 text-2xl'><IoMdHome /> <span className='text-lg'>Home</span></li>
