@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toggleMenu } from '../utils/appSlice'
 import { YOUTUBE_SUGGESTION_API } from '../utils/constant'
 import SearchIcon from './SearchIcon'
+import { cachedValues } from '../utils/SuggestionsSlice'
 
 
 const Head = () => {
@@ -11,10 +12,16 @@ const Head = () => {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
 
+  const cachedSuggestions = useSelector((store) => store.suggestions)
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      getSuggestions()
+      if (cachedSuggestions[searchQuery]) {
+        setSuggestions(cachedSuggestions[searchQuery])
+      } else {
+        getSuggestions()
+      }
+
     }, 400);
 
     return () => {
@@ -29,7 +36,10 @@ const Head = () => {
     const data = await fetch(YOUTUBE_SUGGESTION_API + searchQuery)
     const json = await data.json()
     setSuggestions(json[1])
- 
+    dispatch(cachedValues({
+      [searchQuery]:json[1]
+    }))
+
   }
 
 
@@ -46,14 +56,14 @@ const Head = () => {
       </div>
       <div className='col-span-10 flex items-center justify-center  '>
         <div className='w-[45%] '>
-          <input value={searchQuery} onBlur={()=>setShowSuggestions(false)} onFocus={()=>setShowSuggestions(true)} onChange={(e) => setSearchQuery(e.target.value)} className='rounded-l-full w-[100%] border py-2 pl-10  text-lg  outline-none border-gray-300' type="text" name="" id="" />
-         { suggestions.length>1 && showSuggestions && <div className='fixed w-[527px] rounded-xl border border-gray-100 bg-white'>
+          <input value={searchQuery} onBlur={() => setShowSuggestions(false)} onFocus={() => setShowSuggestions(true)} onChange={(e) => setSearchQuery(e.target.value)} className='rounded-l-full w-[100%] border py-2 pl-10  text-lg  outline-none border-gray-300' type="text" name="" id="" />
+          {suggestions.length > 1 && showSuggestions && <div className='fixed w-[527px] rounded-xl border border-gray-100 bg-white'>
             <ul className='pt-5 pb-2'>
-              {suggestions.map((msg,index)=> <li key={index} className='flex items-center mb-1 gap-2 pl-2  hover:bg-gray-200  text-lg'><SearchIcon/> {msg}</li>)}
-           
-            
-        
-          </ul>
+              {suggestions.map((msg, index) => <li key={index} className='flex items-center mb-1 gap-2 pl-2  hover:bg-gray-200  text-lg'><SearchIcon /> {msg}</li>)}
+
+
+
+            </ul>
           </div>}
         </div>
         <button className=''><div className=" block fill-current border-t border-b border-r border-gray-300  rounded-r-full bg-[#F8F8F8] w-20 h-[45px] px-1 py-1"><svg className='mt-1' xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="24" viewBox="0 0 24 24" width="22" focusable="false" aria-hidden="true" style={{
