@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleMenu } from '../utils/appSlice'
-import { YOUTUBE_SUGGESTION_API } from '../utils/constant'
+import { GOOGLE_API_KEY, YOUTUBE_SEARCH_API, YOUTUBE_SUGGESTION_API } from '../utils/constant'
 import SearchIcon from './SearchIcon'
 import { cachedValues } from '../utils/SuggestionsSlice'
+import { getVideos } from '../utils/SearchSlice'
 
 
 const Head = () => {
@@ -12,7 +13,10 @@ const Head = () => {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
 
+
   const cachedSuggestions = useSelector((store) => store.suggestions)
+  const dispatch = useDispatch()
+  
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -21,8 +25,11 @@ const Head = () => {
       } else {
         getSuggestions()
       }
+      
 
-    }, 400);
+    }, 500);
+    
+  
 
     return () => {
       clearTimeout(timer)
@@ -42,9 +49,17 @@ const Head = () => {
 
   }
 
+  const getSearchedVideos = async()=>{
+    const data = await fetch(YOUTUBE_SEARCH_API+searchQuery+"&key="+GOOGLE_API_KEY)
+    const json = await data.json()
+    dispatch(getVideos(json.items))
+    
+   
+  }
 
 
-  const dispatch = useDispatch()
+
+  
   const toggleMenuHanlder = () => {
     dispatch(toggleMenu())
   }
@@ -59,14 +74,18 @@ const Head = () => {
           <input value={searchQuery} onBlur={() => setShowSuggestions(false)} onFocus={() => setShowSuggestions(true)} onChange={(e) => setSearchQuery(e.target.value)} className='rounded-l-full w-[100%] border py-2 pl-10  text-lg  outline-none border-gray-300' type="text" name="" id="" />
           {suggestions.length > 1 && showSuggestions && <div className='fixed w-[527px] rounded-xl border border-gray-100 bg-white'>
             <ul className='pt-5 pb-2'>
-              {suggestions.map((msg, index) => <li key={index} className='flex items-center mb-1 gap-2 pl-2  hover:bg-gray-200  text-lg'><SearchIcon /> {msg}</li>)}
+              {suggestions.map((msg, index) => (<li   onMouseDown={(e) => {
+              e.preventDefault(); // Prevent losing focus
+              setSearchQuery(msg); // Set the clicked suggestion as input value
+              setShowSuggestions(false); // Hide suggestions
+            }} key={index} className='cursor-pointer flex items-center mb-1 gap-2 pl-2  hover:bg-gray-200  text-lg'><SearchIcon /> {msg}</li>))}
 
 
 
             </ul>
           </div>}
         </div>
-        <button className=''><div className=" block fill-current border-t border-b border-r border-gray-300  rounded-r-full bg-[#F8F8F8] w-20 h-[45px] px-1 py-1"><svg className='mt-1' xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="24" viewBox="0 0 24 24" width="22" focusable="false" aria-hidden="true" style={{
+        <button onClick={()=>getSearchedVideos()}><div className=" block fill-current border-t border-b border-r border-gray-300  rounded-r-full bg-[#F8F8F8] w-20 h-[45px] px-1 py-1"><svg className='mt-1' xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="24" viewBox="0 0 24 24" width="22" focusable="false" aria-hidden="true" style={{
           pointerEvents: 'none',
           display: 'inherit',
           width: '85%',
