@@ -19,7 +19,7 @@ const VideoCard = ({ info }) => {
         
         <h3 className='text-gray-600'>{snippet.channelTitle}</h3>
         <div className='text-gray-600 flex items-center gap-1'>
-          {/* <h5>{statistics.viewCount} Views</h5> */}
+          {statistics? <h5>{statistics.viewCount} Views</h5> : ""} 
           <div className='h-1 w-1 bg-gray-400 rounded-full'></div>
           <h5>14 years ago</h5>
         </div>
