@@ -8,17 +8,17 @@ import Maincontainer from './components/Maincontainer';
 import PlayVideo from './components/PlayVideo';
 
 const appRouter = createBrowserRouter([{
-  path:"/",
-  element:<Body/>,
-  children:[
+  path: "/",
+  element: <Body />,
+  children: [
     {
-      path:"/",
-      element:<Maincontainer/>
+      path: "/",
+      element: <Maincontainer />
 
     },
     {
-      path:"watch",
-      element: <PlayVideo/>
+      path: "/watch",
+      element: <PlayVideo />
     }
   ]
 
@@ -27,11 +27,13 @@ const appRouter = createBrowserRouter([{
 function App() {
   return (
     <>
-    <Provider store={store}>
-       <Head/>
-       <RouterProvider router={appRouter}/>
-       </Provider>
-    </>  
+      <Provider store={store}>
+   
+        <RouterProvider router={appRouter}>
+        
+        </RouterProvider>
+      </Provider>
+    </>
   );
 }
 

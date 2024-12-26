@@ -5,6 +5,7 @@ import { GOOGLE_API_KEY, YOUTUBE_SEARCH_API, YOUTUBE_SUGGESTION_API } from '../u
 import SearchIcon from './SearchIcon'
 import { cachedValues } from '../utils/SuggestionsSlice'
 import { getVideos } from '../utils/SearchSlice'
+import { useNavigate } from 'react-router-dom'
 
 
 const Head = () => {
@@ -16,7 +17,7 @@ const Head = () => {
 
   const cachedSuggestions = useSelector((store) => store.suggestions)
   const dispatch = useDispatch()
-  
+  const navigate = useNavigate()
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -53,6 +54,7 @@ const Head = () => {
     const data = await fetch(YOUTUBE_SEARCH_API+searchQuery+"&key="+GOOGLE_API_KEY)
     const json = await data.json()
     dispatch(getVideos(json.items))
+    navigate("/")
     
    
   }
