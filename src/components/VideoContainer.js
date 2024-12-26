@@ -9,6 +9,7 @@ const VideoContainer = () => {
 
   const [videos, setvideos] = useState([])
   const getvideoData = useSelector((store) => store.search)
+  console.log(getvideoData)
 
 
 
@@ -24,7 +25,7 @@ const VideoContainer = () => {
     setvideos(json?.items)
    
   }
-  const videosToDisplay = getvideoData.length > 0 ? getvideoData[0] : videos;
+  const videosToDisplay = getvideoData.length > 0 ? getvideoData : videos;
 
 
   return (

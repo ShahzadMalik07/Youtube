@@ -6,7 +6,7 @@ const SearchSlice = createSlice({
     initialState:[],
     reducers:{
         getVideos:(state,action)=>{
-            state = state.push(action.payload)
+            return action.payload;
 
         }
     }
